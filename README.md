@@ -1,15 +1,14 @@
-# elixir-phoenix
+# erlang-lisp-zig-ai
 
-Phoenix project in Elixir.
+Fault-tolerant concurrent AI systems.
 
-## Setup
+Inspired by Erlang's telecom origins (reliability, concurrency) but solely for AI.
 
-```bash
-mix archive.install hex phx_new
-mix phx.new . --app elixir_phoenix
-mix deps.get
-mix ecto.create
-mix phx.server
-```
+Erlang: actors & supervision.
+Lisp: symbolic reasoning.
+Zig: low-level performance.
 
-Requires Elixir and Phoenix installed.
+## Structure
+- erlang/
+- lisp/
+- zig/
