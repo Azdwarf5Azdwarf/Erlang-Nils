@@ -1,14 +1,12 @@
-# erlang-lisp-zig-ai
+# mini_ai
 
-Fault-tolerant concurrent AI systems.
+Erlang OTP mini AI system with supervisor + OpenAI API.
 
-Inspired by Erlang's telecom origins (reliability, concurrency) but solely for AI.
+## Run
+```bash
+export OPENAI_API_KEY=sk-...
+rebar3 shell
+mini_ai_server:ask("Hello").
+```
 
-Erlang: actors & supervision.
-Lisp: symbolic reasoning.
-Zig: low-level performance.
-
-## Structure
-- erlang/
-- lisp/
-- zig/
+Supervised gen_server calls OpenAI chat completions.
