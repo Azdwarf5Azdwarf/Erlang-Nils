@@ -20,8 +20,9 @@ handle_call({ask, Prompt}, _From, State) ->
     case Key of
         false -> {reply, {error, no_api_key}, State};
         _ ->
-            Body = jsx:encode(#{model => <<"gpt-4o-mini">>,
-                                messages => [#{role => <<"user">>, content => list_to_binary(Prompt)}]}),
+            Escaped = escape_json(Prompt),
+            Body = lists:flatten(io_lib:format(
+                "{\"model\":\"gpt-4o-mini\",\"messages\":[{\"role\":\"user\",\"content\":\"~s\"}]}", [Escaped])),
             Headers = [{"Authorization", "Bearer " ++ Key},
                        {"Content-Type", "application/json"}],
             Request = {"https://api.openai.com/v1/chat/completions", Headers, "application/json", Body},
@@ -41,3 +42,14 @@ handle_cast(_Msg, State) -> {noreply, State}.
 handle_info(_Info, State) -> {noreply, State}.
 terminate(_Reason, _State) -> ok.
 code_change(_Old, State, _Extra) -> {ok, State}.
+
+escape_json(S) when is_list(S) ->
+    lists:flatten([case C of
+        $" -> "\\\"";
+        $\ -> "\\\\";
+        $
+ -> "\\n";
+        $ -> "\\r";
+        $\t -> "\\t";
+        _ -> C
+    end || C <- S]).
