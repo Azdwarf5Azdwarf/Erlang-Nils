@@ -1,0 +1,9 @@
+{application, mini_ai,
+ [{description, "Mini AI system with OTP supervisor"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, {mini_ai_app, []}},
+  {applications, [kernel, stdlib, inets, ssl]},
+  {env, []},
+  {modules, []}]
+}.
