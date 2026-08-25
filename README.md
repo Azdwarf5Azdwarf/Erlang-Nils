@@ -1,12 +1,22 @@
 # mini_ai
 
-Erlang OTP mini AI system with supervisor + OpenAI API.
+Erlang OTP mini AI + new Elixir OTP twin.
+Related case study: https://github.com/Azdwarf5Azdwarf/wef-cyber-polygon-case-study
 
-## Run
+## Erlang
 ```bash
 export OPENAI_API_KEY=sk-...
 rebar3 shell
 mini_ai_server:ask("Hello").
 ```
 
-Supervised gen_server calls OpenAI chat completions.
+## Elixir (new)
+```bash
+cd elixir
+export OPENAI_API_KEY=sk-...
+mix deps.get
+iex -S mix
+MiniAi.ask("Hello")
+```
+
+Same idea: supervised GenServer calls OpenAI chat completions.
