@@ -1,0 +1,50 @@
+name: Erlang CI
+
+on:
+  push:
+    paths:
+      - "src/**"
+      - "erlang/**"
+      - "rebar.config"
+      - "rebar.lock"
+      - "test/**"
+      - ".github/workflows/erlang.yml"
+  pull_request:
+    paths:
+      - "src/**"
+      - "erlang/**"
+      - "rebar.config"
+      - "rebar.lock"
+      - "test/**"
+      - ".github/workflows/erlang.yml"
+  workflow_dispatch:
+
+jobs:
+  rebar3:
+    name: OTP ${{ matrix.otp }} / rebar3 ${{ matrix.rebar3 }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        otp: ["26.2", "27.3"]
+        rebar3: ["3.24.0"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          rebar3-version: ${{ matrix.rebar3 }}
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/rebar3
+            _build
+          key: erlang-${{ runner.os }}-otp${{ matrix.otp }}-rebar${{ matrix.rebar3 }}-${{ hashFiles('rebar.config') }}
+      - name: Compile
+        run: rebar3 compile
+      - name: EUnit
+        run: rebar3 eunit
+      - name: Compile extra erlang/ modules
+        run: |
+          mkdir -p _build/extra
+          erlc -o _build/extra erlang/ai_supervisor.erl
