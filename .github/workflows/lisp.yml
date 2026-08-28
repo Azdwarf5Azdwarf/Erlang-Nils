@@ -1,0 +1,44 @@
+name: Lisp CI
+
+on:
+  push:
+    paths:
+      - "lisp/**"
+      - ".github/workflows/lisp.yml"
+  pull_request:
+    paths:
+      - "lisp/**"
+      - ".github/workflows/lisp.yml"
+  workflow_dispatch:
+
+jobs:
+  sbcl:
+    name: SBCL smoke tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SBCL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq sbcl
+          sbcl --version
+
+      - name: Smoke tests
+        run: sbcl --script lisp/eliza-tests.lisp
+
+      - name: Compile with no warnings
+        run: |
+          sbcl --noinform --non-interactive \
+               --eval '(defparameter cl-user::*eliza-autostart* nil)' \
+               --load lisp/eliza.lisp 2>&1 | tee compile.log
+          if grep -qi "warning" compile.log; then
+            echo "::error::eliza.lisp produced compiler warnings"
+            exit 1
+          fi
+
+      - name: Run a scripted session
+        run: |
+          printf 'Hello there.\nI am sad about my work.\nI want a new job.\nbye\n' \
+            | sbcl --script lisp/eliza.lisp | tee session.log
+          grep -q "ELIZA:" session.log
